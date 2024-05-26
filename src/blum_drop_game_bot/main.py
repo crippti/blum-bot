@@ -8,8 +8,6 @@ import cv2
 import dxcam
 import numpy as np
 import pyautogui
-from pynput.keyboard import Listener, Key
-from pynput.mouse import Button, Controller
 
 GAME_DURATION = 30
 SNOWFLAKE_COLORS = [
@@ -17,10 +15,6 @@ SNOWFLAKE_COLORS = [
     (13, 219, 71),
     (10, 214, 77)
 ]
-delay = 0.00001
-button = Button.left
-start_stop_key = Key.space
-mouse = Controller()
 
 
 def parse_args():
@@ -29,48 +23,6 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-
-class ClickMouse(threading.Thread):
-    # delay and button is passed in class
-    # to check execution of auto-clicker
-    def __init__(self, delay, button):
-        super(ClickMouse, self).__init__()
-        self.delay = delay
-        self.button = button
-        self.running = False
-        self.program_running = True
-
-    def start_clicking(self):
-        self.running = True
-
-    def stop_clicking(self):
-        self.running = False
-
-    def exit(self):
-        self.stop_clicking()
-        self.program_running = False
-
-    # method to check and run loop until
-    # it is true another loop will check
-    # if it is set to true or not,
-    # for mouse click it set to button
-    # and delay.
-    def run(self):
-        while self.program_running:
-            while self.running:
-                mouse.click(self.button)
-                time.sleep(self.delay)
-            time.sleep(0.1)
-
-        # instance of mouse controller is created
-
-
-# on_press method takes
-# key as argument
-
-
-            # here exit method is called and when
-    # key is pressed it terminates auto clicker
 
 class DropGameBot:
     def __init__(self, resources_path: Path, game_duration, snowflakes_colors):
@@ -87,9 +39,6 @@ class DropGameBot:
                 raise ValueError('Failed to load new_game images.')
         self.snowflakes_colors = snowflakes_colors
         self.game_duration = game_duration
-        self.click_thread = ClickMouse(delay, button)
-        self.listener = Listener(on_press=self.on_press)
-        self.listener.start()
 
     def _detect_play_button(self, im) -> Optional[Tuple[int, int]]:
         for template in self.new_game_variants:
@@ -134,12 +83,9 @@ class DropGameBot:
 
     def play_game(self):
         start_ts = time.time()
-        self.click_thread.start()
-        self.click_thread.start_clicking()
         while time.time() - start_ts < self.game_duration:
             try:
                 im = self.cam.grab()
-                # im = cv2.cvtColor(im, cv2.COLOR_RGB2BGR)
 
                 mask = self._find_snowflakes(im)
                 contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -150,36 +96,19 @@ class DropGameBot:
                         pyautogui.moveTo(center[0], center[1])
                         break
 
-                # time.sleep(0.01)
             except Exception:
                 continue
-        self.click_thread.stop_clicking()
-
-    def on_press(self, key):
-        # start_stop_key will stop clicking
-        # if running flag is set to true
-        if key == start_stop_key:
-            if self.click_thread.running:
-                self.click_thread.stop_clicking()
-            else:
-                self.click_thread.start_clicking()
-
-    def stop(self):
-        self.cam.release()
-        self.click_thread.exit()
-        self.listener.stop()
-        self.listener.join()
-        self.click_thread.join()
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        self.stop()
+        # self.stop()
+        pass
 
 
 def main():
-    print('Blum Drop Game bot made by @crippti')
+    print('Blum Drop Game bot made by @crippti.')
     args = parse_args()
     resources_path = Path(__file__).parent / 'resources'
 
@@ -188,12 +117,13 @@ def main():
         game_duration=GAME_DURATION,
         snowflakes_colors=SNOWFLAKE_COLORS
     ) as bot:
-        time.sleep(3)
-        for i in range(args.play_times):
-            try:
-                bot.start_new_game()
-            except Exception as e:
-                print(f'exc during start {e}')
+        time.sleep(2)
+        # for i in range(args.play_times):
+        while True:
+            # try:
+            #     bot.start_new_game()
+            # except Exception as e:
+            #     print(f'exc during start {e}')
             try:
                 bot.play_game()
             except Exception as e:
