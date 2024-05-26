@@ -66,6 +66,7 @@ class DropGameBot:
             else:
                 mask = cv2.bitwise_or(mask, color_mask)
         return mask
+
     @staticmethod
     def calc_contour_center(contour) -> Optional[Tuple[int, int]]:
         M = cv2.moments(contour)
@@ -88,7 +89,7 @@ class DropGameBot:
             for contour in contours:
                 center = self.calc_contour_center(contour)
                 if center:
-                    pyautogui.leftClick(center[0], center[1])
+                    pyautogui.click(center[0], center[1])
                     break
 
             time.sleep(0.01)
@@ -105,7 +106,7 @@ def main():
 
     bot = DropGameBot(
         resources_path=resources_path,
-        game_duration=2,
+        game_duration=GAME_DURATION,
         snowflakes_colors=SNOWFLAKE_COLORS
     )
     time.sleep(3)
