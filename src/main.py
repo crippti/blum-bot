@@ -8,10 +8,10 @@ from pynput.keyboard import Listener, Key
 
 import cv2
 import dxcam
-import numpy as 30
+import numpy as np
 import pyautogui
 
-GAME_DURATION = 31
+GAME_DURATION = 30
 SNOWFLAKE_COLORS = [
     (86, 211, 142),
     (13, 219, 71),
@@ -192,8 +192,14 @@ def main():
     ) as bot:
         time.sleep(3)
         for i in range(args.play_times):
-            bot.start_new_game()
-            bot.play_game()
+            try:
+                bot.start_new_game()
+            except Exception as e:
+                print(f'exc during start {e}')
+            try:
+                bot.play_game()
+            except Exception as e:
+                print(f'unhandled exception during game start. {e}')
 
 
 
