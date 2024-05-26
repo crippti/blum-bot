@@ -1,15 +1,15 @@
 import argparse
+import threading
 import time
 from pathlib import Path
 from typing import Tuple, Optional
-import threading
-from pynput.mouse import Button, Controller
-from pynput.keyboard import Listener, Key
 
 import cv2
 import dxcam
 import numpy as np
 import pyautogui
+from pynput.keyboard import Listener, Key
+from pynput.mouse import Button, Controller
 
 GAME_DURATION = 30
 SNOWFLAKE_COLORS = [
@@ -31,7 +31,6 @@ def parse_args():
 
 
 class ClickMouse(threading.Thread):
-
     # delay and button is passed in class
     # to check execution of auto-clicker
     def __init__(self, delay, button):
@@ -40,7 +39,6 @@ class ClickMouse(threading.Thread):
         self.button = button
         self.running = False
         self.program_running = True
-
 
     def start_clicking(self):
         self.running = True
@@ -180,8 +178,8 @@ class DropGameBot:
         self.stop()
 
 
-
 def main():
+    print('Blum Drop Game bot made by @crippti')
     args = parse_args()
     resources_path = Path(__file__).parent / 'resources'
 
@@ -200,7 +198,6 @@ def main():
                 bot.play_game()
             except Exception as e:
                 print(f'unhandled exception during game start. {e}')
-
 
 
 if __name__ == '__main__':

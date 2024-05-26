@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools >= 64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "blum-drop-game-bot"
+authors = [{name="Criptacoder", email="crippti@gmail.com"}]
+
+dynamic = ["version"]
+requires-python = ">=3.12"
+dependencies = [
+    "opencv-python",
+    "pynput",
+    "pyautogui",
+    "numpy",
+    "dxcam"
+]
+
+[project.scripts]
+blum-drop-game-bot = "blum_drop_game_bot.main:main"
