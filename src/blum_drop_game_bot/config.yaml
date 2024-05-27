@@ -6,3 +6,5 @@ telegrams:
 #    proxy: "http://user:password@host:port"
 #  - jwt_token: "Bearer eyJ...."
 #    proxy: "https://user:password@host:port"
+
+cpu_count: 12
