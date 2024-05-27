@@ -9,11 +9,9 @@ authors = [{name="Criptacoder", email="crippti@gmail.com"}]
 dynamic = ["version"]
 requires-python = ">=3.12"
 dependencies = [
-    "opencv-python",
-    "pynput",
-    "pyautogui",
-    "numpy",
-    "dxcam"
+    "tls_client",
+    "pydantic",
+    "PyYAML"
 ]
 
 [project.scripts]
