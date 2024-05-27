@@ -11,7 +11,6 @@ import yaml
 from .settings import Settings, ThreadSettings
 
 
-
 def parse_args():
     parser = argparse.ArgumentParser()
 
@@ -20,30 +19,37 @@ def parse_args():
     return args
 
 
-
 def play_game(settings: ThreadSettings):
     session = tls_client.Session(
         random_tls_extension_order=True
     )
-    url = 'https://game-domain.blum.codes/api/v1/game/play'
     headers = {
         'Authorization': settings.tg.jwt_token
     }
-    res = session.post(url, headers=headers, proxy=settings.tg.proxy)
-    if res.status_code > 400:
-        raise RuntimeError(f'Failed start game for {settings}')
-    res_json = res.json()
-    gameId = res_json['gameId']
-    time.sleep(31)
 
-    url = 'https://game-domain.blum.codes/api/v1/game/claim'
-    payload = {
-        'gameId': gameId,
-        'points': settings.points
-    }
-    res = session.post(url, headers=headers, json=payload, proxy=settings.tg.proxy)
+    url = 'https://game-domain.blum.codes/api/v1/user/balance'
+    res = session.get(url, headers=headers, proxy=settings.tg.proxy)
     if res.status_code > 400:
-        raise RuntimeError(f'Failed claim point for game {gameId} for {settings}')
+        raise RuntimeError(f'Failed fetch balance for {settings}')
+    balance = int(res.json()['playPasses'])
+    for retry in range(balance):
+        url = 'https://game-domain.blum.codes/api/v1/game/play'
+
+        res = session.post(url, headers=headers, proxy=settings.tg.proxy)
+        if res.status_code > 400:
+            raise RuntimeError(f'Failed start game for {settings}')
+        res_json = res.json()
+        gameId = res_json['gameId']
+        time.sleep(31)
+
+        url = 'https://game-domain.blum.codes/api/v1/game/claim'
+        payload = {
+            'gameId': gameId,
+            'points': settings.points
+        }
+        res = session.post(url, headers=headers, json=payload, proxy=settings.tg.proxy)
+        if res.status_code > 400:
+            raise RuntimeError(f'Failed claim point for game {gameId} for {settings}')
 
 
 def main():
@@ -66,9 +72,9 @@ def main():
         for i, r in enumerate(results):
             print('Waiting for results...')
             try:
-                r.get(timeout=80)
+                r.get()
             except multiprocessing.TimeoutError:
-                print(f'Result {i} not recieved.')
+                print(f'Result {i} not received.')
 
 
 if __name__ == '__main__':

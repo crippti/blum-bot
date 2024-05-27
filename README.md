@@ -1,22 +1,24 @@
 # Blum Drop Game Bot
-Bot emulates playing Drop Game in Blum using Blum API.
-Can farm points in multiple telegram accounts.
+Бот имитирует Drop Game в Blum, используя Blum API.
+Можно фармить очки с нескольких аккаунтов Telegram.
+При запуске бот будет запускать игры до тех пор, пока не кончатся алмазы. 
 
-## Installation
-Download Python 3.12 and install the bot from root folder of project.
+## Установка
+Скачайте Python 3.12 и установите бота из корневой папки проекта.
+
 ```python
 pip install .
 ```
 
 ## Usage
-### Obtaining JWT token
-1) Open Telegram Web, open Google Chrome DevTools, go to Network tab.
-2) Open Blum app in Telegram Web and find in Network any request to Blum. For example balance.
-3) There are will be `Authorization` header containing JWT token in headers. 
+### Получение JWT токена
+1) Откройте Telegram Web, откройте Google Chrome DevTools, перейдите на вкладку Сеть (Network).
+2) Откройте приложение Blum в Telegram Web и найдите на вкладке Сеть любой запрос к Blum. Например, `balance`.
+3) Во вкладке заголовки (Headers) будет заголовок `Авторизация`, содержащий JWT Token. 
 ![](./docs/screen.png)
 
-### Config file
-Setup `yaml` file like this:
+### Конфигурационный файл
+Отредактируйте файл `yaml` похожим образом:
 
 ```yaml
 min_points: 240
@@ -31,11 +33,15 @@ telegrams:
 cpu_count: 12
 ```
 
-- cpu_count: Count of cpus. Do not add this parameter to set cpu count to auto.
-- min_points: Minimal value of random number of points that will be applied.  
-- max_points: Maximum value of random number of points that will be applied. Must be not greater than 270.
-- telegrams: settings for telegram accounts.
-  - jwt_token: Token in format like "Bearer ..."
-  - proxy: Optional value in format "http://user:password@host:port" 
+- cpu_count: Количество процессоров. Не добавляйте этот параметр для автоматической установки количества процессоров.
+- min_points: Минимальное значение случайного количества баллов, которое будет получено за игру.  
+- max_points: Максимальное значение случайного количества баллов, которое будет начислено. Должно быть не более 270.
+- telegrams: Настройки для аккаунтов telegram.
+  - jwt_token: Токен в формате "Bearer ..."
+  - proxy: Необязательное значение в формате "http://user:password@host:port" 
 
-### Obtaining jwt token.
+
+### Running script
+```cmd
+blum-drop-game-bot.exe --config path/to/config.yaml
+```
