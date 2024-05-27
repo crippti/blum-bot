@@ -1,12 +1,15 @@
 [build-system]
-requires = ["setuptools >= 64"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "blum-drop-game-bot"
-authors = [{name="Criptacoder", email="crippti@gmail.com"}]
+authors = [
+    {name="Criptacoder", email="crippti@gmail.com"}
+]
 
-dynamic = ["version"]
+version = 'v1.0.0'
+readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "tls_client",
@@ -16,3 +19,5 @@ dependencies = [
 
 [project.scripts]
 blum-drop-game-bot = "blum_drop_game_bot.main:main"
+
+

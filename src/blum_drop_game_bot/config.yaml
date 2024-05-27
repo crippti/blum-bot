@@ -2,7 +2,7 @@ min_points: 240
 max_points: 270
 
 telegrams:
-  - jwt_token: "Bearer eyJ...."
-    proxy: "http://user:password@host:port"
-  - jwt_token: "Bearer eyJ...."
-    proxy: "https://user:password@host:port"
+  - jwt_token: "http://user:password@host:port"
+#    proxy: "http://user:password@host:port"
+#  - jwt_token: "Bearer eyJ...."
+#    proxy: "https://user:password@host:port"

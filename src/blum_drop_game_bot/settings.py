@@ -16,7 +16,7 @@ class TgConnection(BaseModel):
 
     @field_validator('proxy')
     @classmethod
-    def start_with_bearer(cls, v: str):
+    def proxy_format(cls, v: str):
         if not re.match(r'https?:\/\/.+:.+@.+:.+', v):
             raise ValueError('Proxy must be in format http://user:password@host:port.')
         return v

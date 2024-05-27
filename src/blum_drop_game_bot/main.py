@@ -1,4 +1,5 @@
 import argparse
+import multiprocessing
 import time
 from multiprocessing import Pool
 from pathlib import Path
@@ -7,7 +8,7 @@ from random import randint
 import tls_client
 import yaml
 
-from settings import Settings, TgConnection, ThreadSettings
+from .settings import Settings, ThreadSettings
 
 
 
@@ -54,12 +55,20 @@ def main():
     settings = Settings(**config)
 
     with Pool(processes=settings.cpu_count) as pool:
+        results = []
         for tg in settings.telegrams:
             thread_settings = ThreadSettings(
                 points=randint(settings.min_points, settings.max_points),
                 tg=tg
             )
-            pool.apply_async(play_game, [thread_settings])
+            results.append(pool.apply_async(play_game, [thread_settings]))
+
+        for i, r in enumerate(results):
+            print('Waiting for results...')
+            try:
+                r.get(timeout=80)
+            except multiprocessing.TimeoutError:
+                print(f'Result {i} not recieved.')
 
 
 if __name__ == '__main__':
