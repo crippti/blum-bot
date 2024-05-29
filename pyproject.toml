@@ -19,6 +19,7 @@ dependencies = [
 
 [tool.hatch.version]
 source = "vcs"
+fallback-version = "v0.0.1"
 
 [project.scripts]
 blum-drop-game-bot = "blum_drop_game_bot.main:main"
