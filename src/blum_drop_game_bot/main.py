@@ -20,36 +20,44 @@ def parse_args():
 
 
 def play_game(settings: ThreadSettings):
-    session = tls_client.Session(
-        random_tls_extension_order=True
-    )
-    headers = {
-        'Authorization': settings.tg.jwt_token
-    }
-
-    url = 'https://game-domain.blum.codes/api/v1/user/balance'
-    res = session.get(url, headers=headers, proxy=settings.tg.proxy)
-    if res.status_code > 400:
-        raise RuntimeError(f'Failed fetch balance for {settings}')
-    balance = int(res.json()['playPasses'])
-    for retry in range(balance):
-        url = 'https://game-domain.blum.codes/api/v1/game/play'
-
-        res = session.post(url, headers=headers, proxy=settings.tg.proxy)
-        if res.status_code > 400:
-            raise RuntimeError(f'Failed start game for {settings}')
-        res_json = res.json()
-        gameId = res_json['gameId']
-        time.sleep(31)
-
-        url = 'https://game-domain.blum.codes/api/v1/game/claim'
-        payload = {
-            'gameId': gameId,
-            'points': settings.points
+    try:
+        session = tls_client.Session(
+            random_tls_extension_order=True
+        )
+        headers = {
+            'Authorization': settings.tg.jwt_token
         }
-        res = session.post(url, headers=headers, json=payload, proxy=settings.tg.proxy)
+
+        url = 'https://game-domain.blum.codes/api/v1/user/balance'
+        res = session.get(url, headers=headers, proxy=settings.tg.proxy)
         if res.status_code > 400:
-            raise RuntimeError(f'Failed claim point for game {gameId} for {settings}')
+            raise RuntimeError(f'Failed fetch balance for {settings}')
+        balance = int(res.json()['playPasses'])
+        for retry in range(balance):
+            try:
+                url = 'https://game-domain.blum.codes/api/v1/game/play'
+
+                res = session.post(url, headers=headers, proxy=settings.tg.proxy)
+                if res.status_code > 400:
+                    raise RuntimeError(f'Failed start game for {settings}')
+                res_json = res.json()
+                gameId = res_json['gameId']
+                time.sleep(31)
+
+                url = 'https://game-domain.blum.codes/api/v1/game/claim'
+                payload = {
+                    'gameId': gameId,
+                    'points': settings.points
+                }
+                res = session.post(url, headers=headers, json=payload, proxy=settings.tg.proxy)
+                if res.status_code > 400:
+                    raise RuntimeError(f'Failed claim point for game {gameId} for {settings}')
+                
+            except Exception as e:
+                print(f"Error during game cycle for game {gameId}: {e}")
+                continue
+    except Exception as main_e:
+        print(f"Unexpected error: {main_e}")
 
 
 def main():
@@ -75,6 +83,8 @@ def main():
                 r.get()
             except multiprocessing.TimeoutError:
                 print(f'Result {i} not received.')
+            except Exception as e:
+                print(f"Unexpected error occurred while collecting result {i}: {e}")
 
 
 if __name__ == '__main__':
