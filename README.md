@@ -1,6 +1,6 @@
 # Blum Drop Game Bot
-> [!NOTE]
-> ВНИМАНИЕ! Бот не работает с тех пор как Blum использует BLUM API V2.
+> [!WARNING]
+> Бот не работает с тех пор как Blum использует BLUM API V2.
 
 
 Бот имитирует Drop Game в Blum, используя Blum API.
